@@ -48,7 +48,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0; 
+            z-index: 9999;
             pointer-events: none; 
         }
 
@@ -118,18 +118,26 @@
         body.entered .scroll-layer { display: block; }
 
         .hero-header {
+            position: relative; /* Context for absolute children */
             width: 100%;
             height: 100vh;
-            background: url('images/AGT_Header.png') center/cover no-repeat;
             opacity: 0;
             transition: opacity 2s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            overflow: hidden;
         }
 
         body.entered .hero-header { opacity: 0.6; }
+
+        /* Fix for image display issues */
+        .hero-bg-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
 
         .hero-subtitle {
             font-family: 'Cinzel', serif;
@@ -137,8 +145,44 @@
             letter-spacing: 5px;
             color: white;
             text-shadow: 0 0 20px var(--primary-glow);
-            max-width: 700px;
             padding: 20px;
+            text-align: center;
+            
+            /* --- NEW POSITIONING (Quadrant Upper Left) --- */
+            position: absolute;
+            top: 25%;  /* Centers it vertically in the top half */
+            left: 25%; /* Centers it horizontally in the left half */
+            transform: translate(-50%, -50%); /* Centers the text box mass on the point */
+
+            /* --- RESPONSIVE SIZING --- */
+            width: 100%;
+            max-width: 45vw; /* Keeps text within the left half of the window */
+        }
+
+        /* --- NEW: MINIMAL SCROLL DOWN ARROW --- */
+        .scroll-down-arrow {
+            position: absolute;
+            bottom: 40px; /* Space from bottom */
+            left: 50%;
+            transform: translateX(-50%); /* Centering */
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            z-index: 5;
+            cursor: pointer; /* NEW: Shows it is clickable */
+            
+            /* Subtle breathing animation to draw the eye */
+            animation: bobbing 2s infinite ease-in-out; 
+        }
+
+        /* Glow effect on the SVG line to match aesthetic */
+        .scroll-down-arrow svg path {
+            stroke: white;
+            filter: drop-shadow(0 0 8px var(--primary-glow));
+        }
+
+        @keyframes bobbing {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, 15px); } /* Move down 15px */
         }
 
         .content-wrapper {
@@ -213,6 +257,8 @@
         @media (max-width: 768px) {
             section { width: 90%; padding: 30px; }
             body.entered .home-container { transform: scale(0.1); }
+            /* Adjust quadrant positioning for mobile so it doesn't look cut off */
+            .hero-subtitle { left: 50%; width: 90%; max-width: 90vw; }
         }
     </style>
 </head>
@@ -229,7 +275,15 @@
 
     <div class="scroll-layer">
         <div class="hero-header">
+            <img src="images/AGT_Header.jpg" alt="AGT Header Background" class="hero-bg-img">
+            
             <div class="hero-subtitle">A cinematic dance through light, shadow, and ethereal reality.</div>
+            
+            <div class="scroll-down-arrow">
+                <svg width="40" height="20" viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 2L20 18L38 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
         </div>
 
         <div class="content-wrapper">
@@ -314,6 +368,15 @@
                 // Trigger resize to fix canvas dimensions if needed
                 window.dispatchEvent(new Event('resize'));
             }
+        });
+
+        // --- NEW: ARROW CLICK SCROLL LOGIC ---
+        const scrollArrow = document.querySelector('.scroll-down-arrow');
+        const firstSection = document.getElementById('about');
+
+        scrollArrow.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevents the body click listener above from firing
+            firstSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
         // --- ADVANCED PARTICLE LOGIC ---
@@ -409,9 +472,11 @@
             ctx.fill();
         }
 
-        function animate() {
-            ctx.fillStyle = 'rgba(5, 5, 8, 1)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+       function animate() {
+            // CHANGED: Wipe the canvas completely clean (transparent) every frame 
+            // instead of painting a solid color over it!
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
             particles = particles.filter(p => p.life > 0);
             burstParticles = burstParticles.filter(p => p.life > 0);
             particles.forEach(p => { p.update(); p.draw(); });
