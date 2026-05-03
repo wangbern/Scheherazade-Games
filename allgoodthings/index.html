@@ -55,7 +55,7 @@
         }
 
         /* --- ENTRY SCREEN / TITLE TRANSITION --- */
-        .home-container {
+        /*.home-container {
             position: fixed;
             top: 0;
             left: 0;
@@ -68,6 +68,26 @@
             z-index: 100;
             transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: auto;
+        }*/
+
+        .home-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            pointer-events: auto;
+            
+            /* FIX 1: Set the origin here BEFORE the click happens */
+            transform-origin: top left; 
+            
+            /* FIX 2: Animate ONLY the transform, rather than 'all' layout properties */
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .title-wrapper {
@@ -96,7 +116,7 @@
         }
 
         /* --- STATE: ENTERED (Shrink Logo to far left upper corner) --- */
-        body.entered .home-container {
+        /*body.entered .home-container {
             transform: scale(0.25);
             transform-origin: top left;
             top: 0;
@@ -105,6 +125,17 @@
             width: auto;
             height: auto;
             pointer-events: none;
+        }*/
+
+        /* --- STATE: ENTERED --- */
+        body.entered .home-container {
+            /* FIX 3: We use translate to fake a 20px margin! 
+               Because the scale is 0.15, we have to divide the 20px space we want 
+               by 0.15 (20 / 0.15 = ~133px) so it looks right after shrinking. */
+            transform: scale(0.25) translate(-290px, -55px);
+            pointer-events: none;
+            
+            /* REMOVED: All the margin, top, left, width, and height changes */
         }
 
         body.entered .tagline { opacity: 0; }
@@ -131,15 +162,29 @@
         body.entered .hero-header { opacity: 0.6; }
 
         /* Fix for image display issues */
-        .hero-bg-img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-        }
+        /* Fix for image display issues */
+.hero-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    opacity: 0; /* Start invisible */
+}
+
+/* Trigger the animation when the user enters */
+body.entered .hero-bg-img {
+    /* 3s duration, smooth easing, and 'forwards' keeps it visible at the end */
+    animation: imageFadeIn 1s ease-in-out forwards;
+}
+
+/* The actual animation instructions */
+@keyframes imageFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; } /* Set to 0.4 for dimming, or 1 for full brightness */
+}
 
         .hero-subtitle {
             font-family: 'Cinzel', serif;
@@ -159,8 +204,19 @@
             /* --- RESPONSIVE SIZING --- */
             width: 100%;
             max-width: 45vw; /* Keeps text within the left half of the window */
+            opacity: 0;
         }
+        /* Trigger the text fade when the user enters */
+body.entered .hero-subtitle {
+    /* duration: 2s | easing: ease-in-out | DELAY: 1s | forwards keeps it visible */
+    animation: subtitleFadeIn 1s ease-in-out 1s forwards;
+}
 
+/* The actual animation instructions */
+@keyframes subtitleFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
         /* --- NEW: MINIMAL SCROLL DOWN ARROW --- */
         .scroll-down-arrow {
             position: absolute;
@@ -294,10 +350,13 @@
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
             section { width: 90%; padding: 30px; }
-            body.entered .home-container { transform: scale(0.1); }
+            body.entered .home-container { transform: scale(0); }
             /* Adjust quadrant positioning for mobile so it doesn't look cut off */
             .hero-subtitle { left: 50%; width: 90%; max-width: 90vw; }
         }
+
+      
+
     </style>
 </head>
 <body>
