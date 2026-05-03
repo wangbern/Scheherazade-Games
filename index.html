@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ALL GOOD THINGS</title>
     
-    <!-- Importing Cinzel Decorative for the title and Jost for reading text -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Jost:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <style>
@@ -27,8 +26,14 @@
             color: var(--text-main);
             font-family: 'Jost', sans-serif;
             overflow-x: hidden;
+            overflow-y: hidden; /* Prevent scrolling before entry */
             scroll-behavior: smooth;
-            cursor: pointer; /* Suggests clicking anywhere */
+            cursor: pointer;
+        }
+
+        body.entered {
+            overflow-y: auto; /* Enable scrolling after entry */
+            cursor: default;
         }
 
         /* --- BACKGROUND PARTICLE CANVAS (Always on top) --- */
@@ -38,29 +43,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 9999; /* Forces cursor to always be on top */
-            pointer-events: none; /* Lets clicks pass through to the page */
+            z-index: 9999; 
+            pointer-events: none; 
         }
 
-        /* --- KEY ART BACKGROUND --- */
-        .key-art-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            /* Temporary dark cinematic image */
-            background: url('https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-            z-index: 0;
-        }
-
-        body.entered .key-art-bg {
-            opacity: 0.35; /* Fades in to act as a dark background */
-        }
-
-        /* --- HOME PAGE ELEMENTS --- */
+        /* --- HOME PAGE ENTRY ELEMENTS --- */
         .home-container {
             position: fixed;
             top: 0;
@@ -72,72 +59,127 @@
             justify-content: center;
             align-items: center;
             z-index: 100;
+            transition: all 1.5s ease-in-out;
         }
 
-        h1.main-title {
-            font-family: 'Cinzel Decorative', serif;
-            font-size: 5rem;
-            letter-spacing: 10px;
-            margin: 0;
-            text-transform: uppercase;
-            color: #ffffff;
-            text-shadow: 0 0 10px var(--primary-glow), 0 0 30px var(--primary-glow);
-            animation: pulse 4s infinite alternate;
+        /* --- TYPOGRAPHY RECREATION --- */
+        .title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             transition: all 1.5s ease-in-out;
-            cursor: pointer;
+            transform-origin: center center;
+        }
+
+        .title-all {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 3.5rem;
+            align-self: flex-start;
+            color: #f2e6ff;
+            text-shadow: 0 0 15px rgba(255, 200, 255, 0.6);
+            transform: translate(25px, 45px); /* Tucks it over the G */
+            z-index: 2;
+            letter-spacing: 2px;
+        }
+
+        .title-good {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 11rem;
+            line-height: 0.9;
+            /* Creates the purple-to-pink-to-purple gradient */
+            background: linear-gradient(to right, #a29bfe, #ff99cc, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(255, 105, 180, 0.5));
+            z-index: 1;
+            letter-spacing: 5px;
+        }
+
+        .letter-o2 {
+            margin-left: -0.25em; /* Interlocks the O's */
+        }
+
+        .title-things {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 3.5rem;
+            align-self: flex-end;
+            color: #f2e6ff;
+            text-shadow: 0 0 15px rgba(255, 200, 255, 0.6);
+            transform: translate(-20px, -45px); /* Tucks it under the D */
+            z-index: 2;
+            letter-spacing: 2px;
         }
 
         .tagline {
             font-family: 'Jost', sans-serif;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 300;
             letter-spacing: 3px;
             color: #d1d1e0;
             text-shadow: 0 0 10px rgba(255,255,255,0.3);
-            margin-top: 30px;
+            margin-top: 50px;
             text-align: center;
             max-width: 800px;
             transition: opacity 1s ease-in-out;
         }
 
-        /* Transition state for Title & Tagline when clicked */
-        body.entered h1.main-title {
+        /* --- STATE TRANSITION: LOGO SHRINKS TO CORNER --- */
+        body.entered .home-container {
             position: fixed;
-            top: 30px;
-            left: 40px;
-            transform: scale(0.35); /* Makes it smaller */
+            top: 20px;
+            left: 30px;
+            width: auto;
+            height: auto;
+            transform: scale(0.25); /* Shrinks title to act as header logo */
             transform-origin: top left;
-            opacity: 0.8; /* Fades slightly */
-            animation: none; /* Stops pulsing */
-            margin: 0;
+            pointer-events: none; /* Prevents catching clicks when minimized */
         }
 
         body.entered .tagline {
             opacity: 0;
+        }
+
+        /* --- SCROLLABLE CONTENT LAYOUT --- */
+        .scroll-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+        }
+
+        /* --- THE HERO HEADER IMAGE --- */
+        .hero-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh; /* Fills the screen initially */
+            background: url('https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
             pointer-events: none;
         }
 
-        /* --- MAIN CONTENT WRAPPER --- */
+        body.entered .hero-header {
+            opacity: 0.5; /* Fades in on click */
+        }
+
+        /* Pushes the rest of the sections completely beneath the 100vh header */
         .content-wrapper {
-            position: relative;
-            z-index: 10;
+            margin-top: 100vh; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 150px; /* Space for the corner title */
             opacity: 0;
             pointer-events: none;
             transition: opacity 2s ease-in-out;
-            transition-delay: 0.8s; /* Waits for title to move before showing */
+            transition-delay: 0.5s;
         }
 
         body.entered .content-wrapper {
             opacity: 1;
             pointer-events: auto;
-        }
-
-        body.entered {
-            cursor: default; /* Reverts cursor back for reading mode */
         }
 
         /* --- SECTIONS (ABOUT, COMING SOON) --- */
@@ -155,7 +197,7 @@
         }
 
         h2 {
-            font-family: 'Cinzel Decorative', serif; /* Use main decorative font for headings too */
+            font-family: 'Cinzel Decorative', serif;
             font-size: 2.5rem;
             color: var(--primary-glow);
             text-shadow: 0 0 15px rgba(216, 150, 255, 0.4);
@@ -195,33 +237,14 @@
 
         /* --- CREDITS SECTION --- */
         #credits {
-            text-align: right; /* Right align as requested */
-            padding-right: 60px; /* Add some padding so it doesn't hug the edge too tight */
-        }
-
-        #credits h2 {
             text-align: right;
+            padding-right: 60px;
         }
+        #credits h2 { text-align: right; }
+        #credits p { font-size: 0.85rem; line-height: 1.1; margin: 4px 0; }
+        #credits .highlight-role { font-size: 0.95rem; color: var(--primary-glow); margin-top: 18px; }
+        #credits strong { font-weight: 700; letter-spacing: 1px; }
 
-        #credits p {
-            font-size: 0.85rem; /* Smaller text */
-            line-height: 1.1; /* Smaller space between lines */
-            margin: 4px 0; /* Tight spacing */
-        }
-
-        #credits .highlight-role {
-            font-size: 0.95rem; /* Slightly larger for roles */
-            color: var(--primary-glow);
-            margin-top: 18px; /* Breathing room before a new role starts */
-        }
-
-        /* Bold all roles (strong tags inside the highlight-role or standalone) */
-        #credits strong {
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        /* --- FOOTER --- */
         footer {
             margin-top: 30px;
             padding: 30px;
@@ -232,16 +255,12 @@
             width: 100%;
         }
 
-        /* --- KEYFRAMES --- */
-        @keyframes pulse {
-            0% { text-shadow: 0 0 10px var(--primary-glow), 0 0 20px rgba(100, 232, 255, 0.3); }
-            100% { text-shadow: 0 0 25px var(--primary-glow), 0 0 45px var(--primary-glow), 0 0 60px rgba(255, 51, 102, 0.4); }
-        }
-
-        /* Responsive Design */
+        /* Responsive adjustments for the custom title */
         @media (max-width: 768px) {
-            h1.main-title { font-size: 3rem; letter-spacing: 5px; }
-            .tagline { font-size: 1rem; padding: 0 20px; }
+            .title-all { font-size: 2rem; transform: translate(15px, 30px); }
+            .title-good { font-size: 6rem; letter-spacing: 2px; }
+            .title-things { font-size: 2rem; transform: translate(-10px, -30px); }
+            .tagline { font-size: 1rem; padding: 0 20px; margin-top: 20px; }
             section { width: 85%; padding: 30px 20px; }
             h2 { font-size: 2rem; }
             #credits { padding-right: 20px; }
@@ -250,171 +269,94 @@
 </head>
 <body>
 
-    <!-- Magic Particle Background (Always top layer) -->
+    <!-- Magic Particle Background -->
     <canvas id="particle-canvas"></canvas>
 
-    <!-- Fading Key Art Background -->
-    <div class="key-art-bg"></div>
-
-    <!-- HERO / HOME SECTION -->
+    <!-- CENTERED ENTRY SCREEN -->
     <div class="home-container">
-        <h1 class="main-title">ALL GOOD THINGS</h1>
+        <div class="title-wrapper">
+            <div class="title-all">ALL</div>
+            <div class="title-good">
+                G<span class="letter-o1">O</span><span class="letter-o2">O</span>D
+            </div>
+            <div class="title-things">THINGS</div>
+        </div>
         <div class="tagline">Whiplash meets Black Swan Meets Just Dance with the visuals of Kpop Demon Hunters.</div>
     </div>
 
-    <!-- MAIN SCROLLABLE CONTENT (Hidden until clicked) -->
-    <div class="content-wrapper">
+    <!-- MAIN SCROLLABLE LAYER -->
+    <div class="scroll-layer">
         
-        <!-- ABOUT SECTION -->
-        <section id="about">
-            <h2>The Experience</h2>
-            <p>
-                Step into a fracturing world composed of vibrant stardust and ancient magic. <em>ALL GOOD THINGS</em> is an experimental narrative experience that explores the delicate balance between creation and consequence.
-            </p>
-            <p>
-                Guide ethereal figures through mesmerizing, particle-driven environments. Every movement leaves a trace, painting the dark cosmos with explosive colors, soaring melodies, and cinematic storytelling.
-            </p>
-        </section>
+        <!-- Fades in to become the Header Image (User must scroll past this) -->
+        <div class="hero-header"></div>
 
-        <!-- MEDIA GRID SECTION -->
-        <section id="media">
-            <h2>Visions</h2>
-            <div class="media-grid">
-                <img src="https://via.placeholder.com/600x338/050508/d896ff?text=Particle+Art+1" alt="Gameplay Glimpse 1">
-                <img src="https://via.placeholder.com/600x338/050508/ff3366?text=Particle+Art+2" alt="Gameplay Glimpse 2">
-                <img src="https://via.placeholder.com/600x338/050508/64e8ff?text=Particle+Art+3" alt="Gameplay Glimpse 3">
-            </div>
-        </section>
+        <!-- Content positioned 100vh below the top so it's beneath the image -->
+        <div class="content-wrapper">
+            
+            <section id="about">
+                <h2>The Experience</h2>
+                <p>
+                    Step into a fracturing world composed of vibrant stardust and ancient magic. <em>ALL GOOD THINGS</em> is an experimental narrative experience that explores the delicate balance between creation and consequence.
+                </p>
+                <p>
+                    Guide ethereal figures through mesmerizing, particle-driven environments. Every movement leaves a trace, painting the dark cosmos with explosive colors, soaring melodies, and cinematic storytelling.
+                </p>
+            </section>
 
-        <!-- COMING SOON SECTION -->
-        <section id="coming-soon">
-            <h2>Coming Soon</h2>
-            <p>
-                The stage is currently being set. <em>ALL GOOD THINGS</em> is in active experimental development. 
-            </p>
-            <p>
-                Check back soon for early access glimpses, devlogs, and official release dates. The curtain will rise when the magic is ready.
-            </p>
-        </section>
+            <section id="media">
+                <h2>Visions</h2>
+                <div class="media-grid">
+                    <img src="https://via.placeholder.com/600x338/050508/d896ff?text=Particle+Art+1" alt="Gameplay Glimpse 1">
+                    <img src="https://via.placeholder.com/600x338/050508/ff3366?text=Particle+Art+2" alt="Gameplay Glimpse 2">
+                    <img src="https://via.placeholder.com/600x338/050508/64e8ff?text=Particle+Art+3" alt="Gameplay Glimpse 3">
+                </div>
+            </section>
 
-        <!-- CREDITS SECTION (Redesigned per instructions) -->
-        <section id="credits">
-            <h2>Credits</h2>
+            <section id="coming-soon">
+                <h2>Coming Soon</h2>
+                <p>
+                    The stage is currently being set. <em>ALL GOOD THINGS</em> is in active experimental development. 
+                </p>
+                <p>
+                    Check back soon for early access glimpses, devlogs, and official release dates. The curtain will rise when the magic is ready.
+                </p>
+            </section>
 
-            <p class="highlight-role"><strong>Director and Producer</strong></p>
-            <p>Bernice Wang</p>
+            <section id="credits">
+                <h2>Credits</h2>
 
-            <p class="highlight-role"><strong>Technical Design Lead</strong></p>
-            <p>Yichen Pan</p>
+                <p class="highlight-role"><strong>Director and Producer</strong></p>
+                <p>Bernice Wang</p>
 
-            <p class="highlight-role"><strong>Technical Design</strong></p>
-            <p>Daisy Aochen Li</p>
+                <p class="highlight-role"><strong>Technical Design Lead</strong></p>
+                <p>Yichen Pan</p>
+                
+                <p class="highlight-role"><strong>Engineering Lead</strong></p>
+                <p>Samuel Tang</p>
 
-            <p class="highlight-role"><strong>UX Design</strong></p>
-            <p>Sky Lu<br>Elvira Zhang</p>
+                <p class="highlight-role"><strong>Special Thanks to</strong></p>
+                <p>Martzi Camos<br>Laird Malamed<br>Whitney Wade<br>Tracy Fullerton<br>Sammy Chuang<br>Chris Bowles<br>Samuel Tang</p>
 
-            <p class="highlight-role"><strong>Interaction Design</strong></p>
-            <p>Ariel Sol</p>
+                <p class="highlight-role"><strong>My Dear Advisors</strong></p>
+                <p>Sarah Elmaleh<br>Jordan Halsey<br>Mark Bolas<br>Andreas Kratky</p>
 
-            <p class="highlight-role"><strong>Engineering Lead</strong></p>
-            <p>Samuel Tang</p>
+                <p class="highlight-role"><strong>MFA Cohort of 26’</strong></p>
+            </section>
 
-            <p class="highlight-role"><strong>Engineering Producer</strong></p>
-            <p>Anooj Vadodkar</p>
-
-            <p class="highlight-role"><strong>Engineers</strong></p>
-            <p>Weizheng Liang<br>Ivy Case<br>Sragvi Vadali<br>Elvira Zhang</p>
-
-            <p class="highlight-role"><strong>Technical Art Lead</strong></p>
-            <p>Rae Z. Chen</p>
-
-            <p class="highlight-role"><strong>Technical Art Producer</strong></p>
-            <p>Reef (Harith Liew)</p>
-
-            <p class="highlight-role"><strong>2D Animation</strong></p>
-            <p>Sky Lu</p>
-
-            <p class="highlight-role"><strong>Technical Artists</strong></p>
-            <p>Yutong Hu<br>Yichen Pan<br>Sunny Cong</p>
-
-            <p class="highlight-role"><strong>UI Artist</strong></p>
-            <p>Kyungyoon Rosa Suh</p>
-
-            <p class="highlight-role"><strong>Artists</strong></p>
-            <p>Sky Lu<br>Tian Yang</p>
-
-            <p class="highlight-role"><strong>3D Modeling and Rigging</strong></p>
-            <p>Oliver Mei<br>Tian Yang<br>Rae Z. Chen</p>
-
-            <p class="highlight-role"><strong>Contract Artists</strong></p>
-            <p>Angela Wenyang Hou<br>Zoe Ziyun Xiao</p>
-
-            <p class="highlight-role"><strong>Narrative</strong></p>
-            <p>Darcy Bergstein</p>
-
-            <p class="highlight-role"><strong>Audio Director</strong></p>
-            <p>Ariel Sol</p>
-
-            <p class="highlight-role"><strong>Original Score by</strong></p>
-            <p>Antonio Medellín-Fajardo, composer<br>Ariel Sol, composer & music designer<br>Annika Huprikar, orchestrator</p>
-
-            <p class="highlight-role"><strong>Indiana University Music in Games Society Orchestra</strong></p>
-            <p>Gabriel Fanelli, Conductor<br>Will Mayhew, Violin Soloist<br>Marcus Gentillon, Flute<br>Noah Thompson, Oboe<br>Lukas Varden, Clarinet<br>Ione Inchaustegui, Bassoon<br>William Wilems, Horn<br>Leo Illari, Trombone<br>Logan Davis, Tuba<br>Colista Paul, Harp<br>Ava Andrews, Violin<br>Dmitri Volkov, Violin<br>Alexandra Spees, Viola</p>
-
-            <p class="highlight-role"><strong>Orchestra Manager</strong></p>
-            <p>Ava Andrews</p>
-
-            <p class="highlight-role"><strong>Score Recorded by</strong></p>
-            <p>Will Heilbraun, Head Engineer<br>Benjamin Stephens, Assistant Engineer<br>L Buehrle, Pro Tools Operator</p>
-
-            <p class="highlight-role"><strong>Recorded at</strong></p>
-            <p>Primary Sound Studios</p>
-
-            <p class="highlight-role"><strong>Additional Musicians</strong></p>
-            <p>Niall Taro Ferguson, Cello</p>
-
-            <p class="highlight-role"><strong>Technical Sound Designer</strong></p>
-            <p>Ariel Sol</p>
-
-            <p class="highlight-role"><strong>Casting & Voice Director</strong></p>
-            <p>Sarah Elmaleh</p>
-
-            <p class="highlight-role"><strong>Voice Actors</strong></p>
-            <p>Kensington Tallman<br>Crispin Freeman, Roth<br>Sarah Elmaleh, Director</p>
-
-            <p class="highlight-role"><strong>Dialogue Editors</strong></p>
-            <p>Henry Goss-Grubbs<br>Molli Shuker<br>Ariel Sol</p>
-
-            <p class="highlight-role"><strong>Consultants</strong></p>
-            <p>Betul Dincer<br>Emma Leihe<br>Sammy Chuang</p>
-
-            <p class="highlight-role"><strong>Special Thanks to</strong></p>
-            <p>Martzi Camos<br>Laird Malamed<br>Whitney Wade<br>Tracy Fullerton<br>Sammy Chuang<br>Chris Bowles<br>Samuel Tang</p>
-
-            <p class="highlight-role"><strong>My Dear Advisors</strong></p>
-            <p>Sarah Elmaleh<br>Jordan Halsey<br>Mark Bolas<br>Andreas Kratky</p>
-
-            <p class="highlight-role"><strong>MFA Cohort of 26’</strong></p>
-        </section>
-
-        <!-- FOOTER -->
-        <footer>
-            <p>&copy; 2026 Scheherazade Games. "ALL GOOD THINGS" is an experimental interactive project.</p>
-        </footer>
-
+            <footer>
+                <p>&copy; 2026 Scheherazade Games. "ALL GOOD THINGS" is an experimental interactive project.</p>
+            </footer>
+        </div>
     </div>
 
     <script>
-        // =========================
-        // PAGE INTERACTION LOGIC
-        // =========================
         let isEntered = false;
         
-        // Listen for a click anywhere on the page
         document.body.addEventListener('click', () => {
             if (!isEntered) {
+                // Ensure the user starts at the very top of the page when unlocking scroll
+                window.scrollTo(0, 0); 
                 isEntered = true;
-                // Adding this class triggers all the CSS transitions
                 document.body.classList.add('entered');
             }
         });
@@ -430,7 +372,6 @@
         let trail = [];
 
         const TRAIL_LENGTH = 25;
-
         let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
 
         function resizeCanvas() {
@@ -462,22 +403,17 @@
             constructor() {
                 this.t = Math.random() * (TRAIL_LENGTH - 1);
                 this.speed = Math.random() * 0.4 + 0.15;
-
                 this.size = Math.random() * 3 + 2;
                 this.life = 1;
-
                 this.rotation = Math.random() * Math.PI;
                 this.spin = (Math.random() - 0.5) * 0.08;
-
                 this.offsetAngle = Math.random() * Math.PI * 2;
                 this.offsetRadius = Math.random() * 5;
-
                 this.color = '255, 0, 170';
             }
 
             update() {
                 this.t += this.speed;
-
                 if (this.t >= trail.length - 1) {
                     this.life -= 0.03;
                     return;
@@ -485,7 +421,6 @@
 
                 const i = Math.floor(this.t);
                 const frac = this.t - i;
-
                 const p1 = trail[i];
                 const p2 = trail[i + 1];
 
@@ -515,16 +450,12 @@
             constructor(x, y) {
                 this.x = x;
                 this.y = y;
-
                 const angle = Math.random() * Math.PI * 2;
                 const speed = Math.random() * 2 + 0.5;
-
                 this.vx = Math.cos(angle) * speed;
                 this.vy = Math.sin(angle) * speed;
-
                 this.life = 1;
                 this.size = Math.random() * 2 + 1;
-
                 this.color = '255, 80, 200'; 
             }
 
@@ -558,7 +489,6 @@
             ctx.lineTo(-size, 0);
             ctx.lineTo(-size * 0.3, -size * 0.3);
             ctx.closePath();
-
             ctx.fillStyle = fillStyle;
             ctx.shadowBlur = 20;
             ctx.shadowColor = fillStyle;
@@ -567,22 +497,12 @@
         }
 
         function animate() {
-            // Replaced the black fill with clearRect so the canvas is transparent
-            // This allows the background images and content beneath to show through
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             particles = particles.filter(p => p.life > 0);
             burstParticles = burstParticles.filter(p => p.life > 0);
 
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
-            burstParticles.forEach(p => {
-                p.update();
-                p.draw();
-            });
+            particles.forEach(p => { p.update(); p.draw(); });
+            burstParticles.forEach(p => { p.update(); p.draw(); });
 
             requestAnimationFrame(animate);
         }
