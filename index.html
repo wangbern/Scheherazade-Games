@@ -441,7 +441,10 @@ const canvas = document.getElementById('particle-canvas');
 const ctx = canvas.getContext('2d');
 
 let particles = [];
-let mouse = { x: 0, y: 0, moving: false };
+let trail = []; // stores mouse history
+const TRAIL_LENGTH = 25;
+
+let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -456,91 +459,124 @@ resizeCanvas();
 window.addEventListener('mousemove', (e) => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
-    mouse.moving = true;
 
-    // Spawn particles on movement
-    for (let i = 0; i < 6; i++) {
-        particles.push(new Particle(mouse.x, mouse.y));
+    // Add to trail
+    trail.push({ x: mouse.x, y: mouse.y });
+    if (trail.length > TRAIL_LENGTH) trail.shift();
+
+    // Spawn particles that will follow the trail
+    for (let i = 0; i < 2; i++) {
+        particles.push(new Particle());
     }
-
-    // Reset idle fade timer
-    clearTimeout(mouse.timeout);
-    mouse.timeout = setTimeout(() => {
-        mouse.moving = false;
-    }, 80);
 });
 
 // =========================
 // PARTICLE CLASS
 // =========================
 class Particle {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
+    constructor() {
+        this.t = Math.random() * (TRAIL_LENGTH - 1); // position along trail
+        this.speed = Math.random() * 0.5 + 0.2;
 
-        this.size = Math.random() * 4 + 2;
+        this.size = Math.random() * 3 + 2;
         this.life = 1;
 
-        this.speedX = (Math.random() - 0.5) * 2;
-        this.speedY = (Math.random() - 0.5) * 2 - 1;
-
-        const colors = ['#ff66cc', '#cc99ff', '#66ccff', '#ffffff'];
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-
         this.rotation = Math.random() * Math.PI;
-        this.spin = (Math.random() - 0.5) * 0.2;
+        this.spin = (Math.random() - 0.5) * 0.1;
+
+        // subtle orbit offset
+        this.offsetAngle = Math.random() * Math.PI * 2;
+        this.offsetRadius = Math.random() * 6;
+
+        this.baseColor = '255,182,193'; // soft pink
     }
 
     update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
+        this.t += this.speed;
+
+        // if past trail → fade out
+        if (this.t >= trail.length - 1) {
+            this.life -= 0.03;
+            return;
+        }
+
+        // --- Bezier-like interpolation (lerp between points) ---
+        const i = Math.floor(this.t);
+        const frac = this.t - i;
+
+        const p1 = trail[i];
+        const p2 = trail[i + 1];
+
+        if (!p1 || !p2) return;
+
+        this.x = p1.x + (p2.x - p1.x) * frac;
+        this.y = p1.y + (p2.y - p1.y) * frac;
+
+        // soft orbit motion (fairy wobble)
+        this.offsetAngle += 0.05;
+        this.x += Math.cos(this.offsetAngle) * this.offsetRadius;
+        this.y += Math.sin(this.offsetAngle) * this.offsetRadius;
 
         this.rotation += this.spin;
-
-        this.life -= 0.02;
     }
 
     draw() {
+        const alpha = this.life;
+
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.rotation);
 
-        ctx.globalAlpha = this.life;
+        // --- RGB shimmer ---
+        const offset = 1.5;
 
-        // Glow
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = this.color;
-
-        ctx.fillStyle = this.color;
-
-        // 4-point star
+        // red ghost
         ctx.beginPath();
-        ctx.moveTo(0, -this.size);
-        ctx.lineTo(this.size * 0.3, -this.size * 0.3);
-        ctx.lineTo(this.size, 0);
-        ctx.lineTo(this.size * 0.3, this.size * 0.3);
-        ctx.lineTo(0, this.size);
-        ctx.lineTo(-this.size * 0.3, this.size * 0.3);
-        ctx.lineTo(-this.size, 0);
-        ctx.lineTo(-this.size * 0.3, -this.size * 0.3);
-        ctx.closePath();
+        drawStar(ctx, -offset, 0, this.size);
+        ctx.fillStyle = `rgba(255,120,160,${alpha * 0.4})`;
         ctx.fill();
 
+        // blue ghost
+        ctx.beginPath();
+        drawStar(ctx, offset, 0, this.size);
+        ctx.fillStyle = `rgba(120,180,255,${alpha * 0.4})`;
+        ctx.fill();
+
+        // main pink star
+        ctx.beginPath();
+        drawStar(ctx, 0, 0, this.size);
+
+        ctx.fillStyle = `rgba(${this.baseColor},${alpha})`;
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = `rgba(${this.baseColor},${alpha})`;
+        ctx.fill();
+
+        ctx.shadowBlur = 0;
         ctx.restore();
     }
+}
+
+// =========================
+// STAR SHAPE
+// =========================
+function drawStar(ctx, x, y, size) {
+    ctx.moveTo(x, y - size);
+    ctx.lineTo(x + size * 0.3, y - size * 0.3);
+    ctx.lineTo(x + size, y);
+    ctx.lineTo(x + size * 0.3, y + size * 0.3);
+    ctx.lineTo(x, y + size);
+    ctx.lineTo(x - size * 0.3, y + size * 0.3);
+    ctx.lineTo(x - size, y);
+    ctx.lineTo(x - size * 0.3, y - size * 0.3);
+    ctx.closePath();
 }
 
 // =========================
 // ANIMATION LOOP
 // =========================
 function animate() {
-    // If mouse isn't moving → fade to black
-    if (!mouse.moving) {
-        ctx.fillStyle = 'rgba(5, 5, 10, 0.2)';
-    } else {
-        ctx.fillStyle = 'rgba(5, 5, 10, 0.05)';
-    }
-
+    // dreamy fade
+    ctx.fillStyle = 'rgba(10, 8, 15, 0.08)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     particles = particles.filter(p => p.life > 0);
