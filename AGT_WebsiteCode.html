@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALL GOOD THINGS</title>
+    
+    <!-- Importing a cinematic font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- GLOBAL STYLES & AESTHETIC --- */
+        :root {
+            --primary-glow: #a87ffb;
+            --secondary-glow: #64e8ff;
+            --bg-color: #030307;
+            --text-main: #f0f0f5;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- BACKGROUND PARTICLE CANVAS --- */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none; /* Allows clicking through the canvas */
+        }
+
+        /* --- CONTENT WRAPPER --- */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 4rem;
+            letter-spacing: 10px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px var(--primary-glow), 0 0 40px var(--primary-glow);
+            animation: pulse 4s infinite alternate;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: #d1d1e0;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+            max-width: 600px;
+        }
+
+        /* --- SECTIONS (ABOUT, MEDIA) --- */
+        section {
+            width: 80%;
+            max-width: 1000px;
+            margin: 50px 0;
+            padding: 40px;
+            background: rgba(20, 20, 30, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 127, 251, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--secondary-glow);
+            text-shadow: 0 0 15px rgba(100, 232, 255, 0.5);
+            margin-top: 0;
+        }
+
+        p {
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: #ccc;
+        }
+
+        /* --- MEDIA GRID --- */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .media-grid img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+        }
+
+        .media-grid img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        /* --- BUTTONS --- */
+        .cta-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            background: linear-gradient(45deg, transparent, rgba(168, 127, 251, 0.3), transparent);
+            border: 2px solid var(--primary-glow);
+            border-radius: 30px;
+            box-shadow: 0 0 15px var(--primary-glow) inset, 0 0 20px var(--primary-glow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background: rgba(168, 127, 251, 0.2);
+            box-shadow: 0 0 25px var(--primary-glow) inset, 0 0 40px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: auto;
+            padding: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* --- KEYFRAMES --- */
+        @keyframes pulse {
+            0% { text-shadow: 0 0 10px var(--primary-glow), 0 0 20px var(--primary-glow); }
+            100% { text-shadow: 0 0 20px var(--primary-glow), 0 0 50px var(--primary-glow), 0 0 80px var(--primary-glow); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; letter-spacing: 5px; }
+            section { width: 90%; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Magic Particle Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="content-wrapper">
+        
+        <!-- HERO SECTION -->
+        <div class="hero">
+            <h1>ALL GOOD THINGS</h1>
+            <!-- REPLACE THIS SUBTITLE TEXT -->
+            <div class="subtitle">An experimental journey through light, shadow, and consequence.</div>
+            
+            <!-- REPLACE '#' WITH YOUR GAME LINK (e.g., Itch.io, Steam, or Download link) -->
+            <a href="#" class="cta-button">ENTER THE EXPERIENCE</a>
+        </div>
+
+        <!-- ABOUT SECTION -->
+        <section id="about">
+            <h2>The Vision</h2>
+            <!-- REPLACE THIS TEMP DESCRIPTION -->
+            <p>
+                In a world fracturing at the edges of reality, <em>ALL GOOD THINGS</em> invites players into an atmospheric narrative where every interaction weaves a new thread into the cosmos. 
+                Explore ethereal landscapes, uncover forgotten truths, and manipulate the very particles of existence to forge your path. 
+                This experimental project blends cinematic storytelling with mesmerizing visual effects to create an unforgettable, magical experience.
+            </p>
+        </section>
+
+        <!-- MEDIA / SCREENSHOTS SECTION -->
+        <section id="media">
+            <h2>Glimpses</h2>
+            <div class="media-grid">
+                <!-- REPLACE THESE 'src' URLs WITH YOUR ACTUAL IMAGE URLs -->
+                <!-- Example of local image: <img src="images/screenshot1.png" alt="Gameplay 1"> -->
+                <img src="https://via.placeholder.com/600x338/1a1a2e/a87ffb?text=Game+Screenshot+1" alt="Screenshot 1 placeholder">
+                <img src="https://via.placeholder.com/600x338/1a1a2e/64e8ff?text=Game+Screenshot+2" alt="Screenshot 2 placeholder">
+                <img src="https://via.placeholder.com/600x338/1a1a2e/a87ffb?text=Game+Screenshot+3" alt="Screenshot 3 placeholder">
+                <img src="https://via.placeholder.com/600x338/1a1a2e/64e8ff?text=Game+Screenshot+4" alt="Screenshot 4 placeholder">
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <!-- REPLACE WITH YOUR NAME / STUDIO -->
+            <p>&copy; 2026 Your Studio Name. "ALL GOOD THINGS" is an experimental project.</p>
+        </footer>
+
+    </div>
+
+    <!-- PARTICLE VFX SCRIPT -->
+    <script>
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let particles = [];
+        const particleCount = 100; // Adjust for more/less magic dust
+
+        // Resize canvas to fit window
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Particle Class
+        class Particle {
+            constructor() {
+                this.reset();
+                // Randomize initial Y so they don't all start at the bottom on load
+                this.y = Math.random() * canvas.height; 
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 100;
+                this.size = Math.random() * 2.5 + 0.5;
+                this.speedY = Math.random() * -1 - 0.5; // Float upwards
+                this.speedX = (Math.random() - 0.5) * 1; // Drift left/right
+                this.life = Math.random() * 0.5 + 0.1; // Alpha value
+                
+                // Magical color palette (Purples, Blues, Pinks)
+                const colors = ['#a87ffb', '#64e8ff', '#d6a8ff', '#ffffff'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                
+                // Add slight wobble
+                this.speedX += (Math.random() - 0.5) * 0.05;
+
+                // Reset if it goes off screen
+                if (this.y < -10 || this.x < -10 || this.x > canvas.width + 10) {
+                    this.reset();
+                    this.y = canvas.height + 10; // strictly reset to bottom
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.globalAlpha = 1; // Reset alpha for other elements
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        // Initialize particles
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        // Animation Loop
+        function animate() {
+            // Slight clear for trailing effect
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+
+        initParticles();
+        animate();
+    </script>
+</body>
+</html>
