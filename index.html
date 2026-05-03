@@ -95,7 +95,7 @@
 
         /* --- STATE: ENTERED (Shrink Logo to far left upper corner) --- */
         body.entered .home-container {
-            transform: scale(0.15);
+            transform: scale(0.25);
             transform-origin: top left;
             top: 0;
             left: 0;
@@ -146,12 +146,12 @@
             color: white;
             text-shadow: 0 0 20px var(--primary-glow);
             padding: 20px;
-            text-align: center;
+            text-align: left;
             
             /* --- NEW POSITIONING (Quadrant Upper Left) --- */
             position: absolute;
-            top: 25%;  /* Centers it vertically in the top half */
-            left: 25%; /* Centers it horizontally in the left half */
+            top: 50%;  /* Centers it vertically in the top half */
+            left: 30%; /* Centers it horizontally in the left half */
             transform: translate(-50%, -50%); /* Centers the text box mass on the point */
 
             /* --- RESPONSIVE SIZING --- */
@@ -223,6 +223,14 @@
             letter-spacing: 1px;
         }
 
+        .highlight-stuff { 
+            color: var(--primary-glow); 
+            margin-top: 1opx; 
+            font-weight: 500; 
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+
         /* Right align credits */
         #credits {
             text-align: right;
@@ -243,7 +251,34 @@
             transition: transform 0.4s ease;
         }
         .media-grid img:hover { transform: scale(1.05); border-color: var(--tertiary-glow); }
+        /* --- VIDEO STACK --- */
+        .video-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centers the videos horizontally */
+            gap: 40px; /* Adds space between the top and bottom video */
+            margin-top: 40px;
+            width: 100%;
+        }
 
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 750px; /* Keeps the videos from getting absurdly huge on wide monitors */
+            aspect-ratio: 16 / 9; /* Modern way to lock the YouTube dimensions */
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
         footer {
             padding: 50px;
             text-align: center;
@@ -270,14 +305,14 @@
         <div class="title-wrapper">
             <img src="images/AGT_Logo.png" alt="All Good Things" class="logo-image">
         </div>
-        <div class="tagline">Whiplash meets Black Swan Meets Just Dance.</div>
+        <div class="tagline">Whiplash meets Black Swan meets Just Dance.</div>
     </div>
 
     <div class="scroll-layer">
         <div class="hero-header">
             <img src="images/AGT_Header.jpg" alt="AGT Header Background" class="hero-bg-img">
             
-            <div class="hero-subtitle">A cinematic dance through light, shadow, and ethereal reality.</div>
+            <div class="hero-subtitle">Push and spread light <br> <br> to experience a ballerina's <br> beautiful, painful life.</div>
             
             <div class="scroll-down-arrow">
                 <svg width="40" height="20" viewBox="0 0 40 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -289,23 +324,43 @@
         <div class="content-wrapper">
             
             <section id="about">
-                <h2>The Experience</h2>
-                <p>Step into a fracturing world composed of vibrant stardust and ancient magic. <em>ALL GOOD THINGS</em> is an experimental narrative experience exploring the balance between creation and consequence.</p>
-                <p>Guide ethereal figures through mesmerizing, particle-driven environments. Every movement leaves a trace, painting the dark cosmos with explosive colors, soaring melodies, and cinematic storytelling.</p>
+                <h2>Game Overview</h2>
+                <p>With just your laptop or computer webcam, step into the dance studio and onto the stage. <br> <br> <em>ALL GOOD THINGS</em> is a digital PC game using the player body as an alt controller. <br> <br>
+                Play as ANNA, a young dancer who must become a prima ballerina while dealing with challenges as the protege of the extraordinary genius ballet master ROTH. </p>
             </section>
 
             <section id="media">
-                <h2>Visions</h2>
+                <h2>The Experience</h2>
+                
                 <div class="media-grid">
-                    <img src="https://via.placeholder.com/600x338/050508/d896ff?text=Particle+Art+1" alt="Vision 1">
-                    <img src="https://via.placeholder.com/600x338/050508/ff3366?text=Particle+Art+2" alt="Vision 2">
-                    <img src="https://via.placeholder.com/600x338/050508/64e8ff?text=Particle+Art+3" alt="Vision 3">
+                    <img src="images/screenshot 1.png" alt="Screenshot 1">
+                    <img src="images/screenshot 2.png" alt="Screenshot 2">
+                    <img src="images/screenshot 3.png" alt="Screenshot 3">
                 </div>
+
+                <br><br>
+
+                <div class="video-stack">
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/Rfpc91IXwlc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/Y7mPHKNQ2eU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </section>
+
+            <section id="coming soon">
+                <h2>August 2026</h2>
+                <p>Based on the development timeline, we will release on <b> Steam in August 2026.</b> <br> <br> Currently, we are demo-ing at IMGD MFA Thesis Show (May 11th 5-9 pm) and USC Games EXPO (May 12th 5-9 pm).  </p>
             </section>
 
             <section id="technology">
                 <h2>Technology</h2>
-                <p>Powered by custom particle engines and real-time audio reactivity, the interactive experience leverages deep visual rendering techniques to simulate ethereal light and shadow at a cinematic scale.</p>
+                <p>We use <em>Unity</em> and <em>Touchdesigner</em>, with body tracking from <em>Mediapipe</em>.<br> <br><br>
+                <p class="highlight-stuff"
+                <b> The game does not need any additional hardware to play.</b> </p>
+                As a game with experimental technology, thank you in advance for your patience as we improve development. Feel free to reach out to scheherazadegames@gmail.com with any questions or bug reports upon release!</p>
             </section>
 
             <section id="credits">
@@ -323,31 +378,35 @@
 
                 <p class="highlight-role">Engineering Lead</p>
                 <p>Samuel Tang</p>
-                <p><strong>Engineering Producer:</strong> Anooj Vadodkar</p>
+                <p class="highlight-role">Engineering Producer</p>
+                <p>Anooj Vadodkar</p>
+                
                 <p><strong>Engineers:</strong> Weizheng Liang, Ivy Case, Sragvi Vadali, Elvira Zhang</p>
 
                 <p class="highlight-role">Technical Art Lead</p>
                 <p>Rae Z. Chen</p>
-                <p><strong>Technical Art Producer:</strong> Reef (Harith Liew)</p>
+                <p class="highlight-role">Art Producer</p>
+                <p>Reef (Harith Liew)</p>
+                
                 <p><strong>Technical Artists:</strong> Yutong Hu, Yichen Pan, Sunny Cong</p>
 
-                <p class="highlight-role">Art & Visuals</p>
+                
                 <p><strong>2D Animation:</strong> Sky Lu</p>
                 <p><strong>UI Artist:</strong> Kyungyoon Rosa Suh</p>
                 <p><strong>Artists:</strong> Sky Lu, Tian Yang</p>
                 <p><strong>3D Modeling & Rigging:</strong> Oliver Mei, Tian Yang, Rae Z. Chen</p>
 
-                <p class="highlight-role">Audio & Music</p>
-                <p><strong>Audio Director:</strong> Ariel Sol</p>
+                <p class="highlight-role">Audio Director</p>
+                <p>Ariel Sol</p>
                 <p><strong>Original Score:</strong> Antonio Medellín-Fajardo, Ariel Sol, Annika Huprikar</p>
                 <p><strong>Orchestra:</strong> Indiana University Music in Games Society Orchestra</p>
 
                 <p class="highlight-role">Voice Cast</p>
                 <p><strong>Voice Director:</strong> Sarah Elmaleh</p>
-                <p><strong>Actors:</strong> Kensington Tallman, Crispin Freeman (Roth), Sarah Elmaleh (Director)</p>
+                <p><strong>Actors:</strong> Kensington Tallman (Anna), Crispin Freeman (Roth), Sarah Elmaleh ("the Director")</p>
 
                 <p class="highlight-role">Special Thanks</p>
-                <p>Martzi Camos, Laird Malamed, Whitney Wade, Tracy Fullerton, Sammy Chuang, Chris Bowles</p>
+                <p>Martzi Campos, Laird Malamed, Whitney Wade, Tracy Fullerton, Sammy Chuang, Chris Bowles</p>
                 <p><strong>MFA Cohort of 26’</strong></p>
             </section>
 
