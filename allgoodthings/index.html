@@ -217,6 +217,150 @@ body.entered .hero-subtitle {
     0% { opacity: 0; }
     100% { opacity: 1; }
 }
+        /* --- MAILING LIST BUTTON (top right of header) --- */
+        .mailing-list-btn {
+            position: fixed;
+            top: 25px;
+            right: 30px;
+            z-index: 20;
+            padding: 10px 22px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            color: white;
+            text-decoration: none;
+            border: 1px solid var(--primary-glow);
+            border-radius: 30px;
+            background: rgba(10, 10, 15, 0.5);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 0 15px rgba(216, 150, 255, 0.3);
+            opacity: 0;
+            cursor: pointer;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .mailing-list-btn:hover {
+            background: rgba(216, 150, 255, 0.2);
+            box-shadow: 0 0 25px rgba(216, 150, 255, 0.6);
+        }
+
+        body.entered .mailing-list-btn {
+            animation: subtitleFadeIn 1s ease-in-out 1s forwards;
+        }
+
+        /* --- MAILING LIST OVERLAY --- */
+        .mailing-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            background: rgba(5, 5, 8, 0.75);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        .mailing-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mailing-card {
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+            padding: 40px 32px;
+            box-sizing: border-box;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(20, 20, 30, 0.95), rgba(10, 10, 15, 0.98));
+            border: 1px solid rgba(216, 150, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(216, 150, 255, 0.2);
+        }
+
+        .mailing-card h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--primary-glow);
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+            margin: 0 0 10px;
+        }
+
+        .mailing-card p {
+            font-size: 1rem;
+            margin: 0 0 24px;
+        }
+
+        .mailing-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.8rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .mailing-close:hover { color: white; }
+
+        .mailing-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .mailing-form input[type="email"] {
+            padding: 12px 16px;
+            font-family: 'Jost', sans-serif;
+            font-size: 1rem;
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(216, 150, 255, 0.3);
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .mailing-form input[type="email"]:focus {
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 12px rgba(216, 150, 255, 0.4);
+        }
+
+        /* Honeypot field: hidden from people, bots tend to fill it in */
+        .mailing-form .hp { position: absolute; left: -9999px; }
+
+        .mailing-form button[type="submit"] {
+            padding: 12px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            color: white;
+            background: rgba(216, 150, 255, 0.2);
+            border: 1px solid var(--primary-glow);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .mailing-form button[type="submit"]:hover {
+            background: rgba(216, 150, 255, 0.35);
+            box-shadow: 0 0 20px rgba(216, 150, 255, 0.5);
+        }
+
+        .mailing-form button[type="submit"]:disabled { opacity: 0.5; cursor: wait; }
+
+        .mailing-status {
+            min-height: 1.5em;
+            margin-top: 14px;
+            font-size: 0.95rem;
+            color: var(--secondary-glow);
+        }
+
         /* --- NEW: MINIMAL SCROLL DOWN ARROW --- */
         .scroll-down-arrow {
             position: absolute;
@@ -353,6 +497,7 @@ body.entered .hero-subtitle {
             body.entered .home-container { transform: scale(0); }
             /* Adjust quadrant positioning for mobile so it doesn't look cut off */
             .hero-subtitle { left: 50%; width: 90%; max-width: 90vw; }
+            .mailing-list-btn { top: 16px; right: 16px; padding: 8px 16px; font-size: 0.8rem; letter-spacing: 1px; }
         }
 
       
@@ -371,6 +516,10 @@ body.entered .hero-subtitle {
     </div>
 
     <div class="scroll-layer">
+        <!-- Fixed to the top right so it stays visible while scrolling, like the logo.
+             Sits outside .hero-header so it isn't dimmed by the header's 0.6 opacity. -->
+        <button type="button" class="mailing-list-btn">Join Mailing List</button>
+
         <div class="hero-header">
             <img src="images/AGT_Header.jpg" alt="AGT Header Background" class="hero-bg-img">
             
@@ -528,7 +677,79 @@ Sammy Chuang
         </div>
     </div>
 
+    <!-- --- MAILING LIST OVERLAY --- -->
+    <div class="mailing-overlay" role="dialog" aria-modal="true" aria-labelledby="mailing-title">
+        <div class="mailing-card">
+            <button type="button" class="mailing-close" aria-label="Close">&times;</button>
+            <h3 id="mailing-title">Join the Mailing List</h3>
+            <p>Get updates on <em>ALL GOOD THINGS</em> and our Steam release.</p>
+            <form class="mailing-form">
+                <input type="email" name="email" placeholder="your@email.com" required autocomplete="email">
+                <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+                <button type="submit">Submit</button>
+            </form>
+            <div class="mailing-status" aria-live="polite"></div>
+        </div>
+    </div>
+
     <script>
+        // --- MAILING LIST LOGIC ---
+        // Paste the Google Apps Script web app URL (ends in /exec) here.
+        const MAILING_LIST_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxk9asuvy2iWZmJx2ToKH5sKfDAUuB1uLG-ecfy-bDCRmlglbb8237GnvJxCc98v-BANA/exec';
+
+        const mailingBtn = document.querySelector('.mailing-list-btn');
+        const mailingOverlay = document.querySelector('.mailing-overlay');
+        const mailingForm = document.querySelector('.mailing-form');
+        const mailingStatus = document.querySelector('.mailing-status');
+        const mailingSubmit = mailingForm.querySelector('button[type="submit"]');
+
+        function openMailing() {
+            mailingOverlay.classList.add('open');
+            mailingStatus.textContent = '';
+            mailingForm.email.focus();
+        }
+
+        function closeMailing() {
+            mailingOverlay.classList.remove('open');
+        }
+
+        mailingBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openMailing();
+        });
+        document.querySelector('.mailing-close').addEventListener('click', closeMailing);
+        // Clicking the dark backdrop (not the card) closes it
+        mailingOverlay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (e.target === mailingOverlay) closeMailing();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMailing();
+        });
+
+        mailingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            mailingSubmit.disabled = true;
+            mailingStatus.textContent = 'Sending...';
+
+            try {
+                // no-cors: Apps Script doesn't return CORS headers we can read,
+                // so the request goes through but the response is opaque.
+                await fetch(MAILING_LIST_ENDPOINT, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: new URLSearchParams(new FormData(mailingForm))
+                });
+                mailingStatus.textContent = "Thank you! You're on the list.";
+                mailingForm.reset();
+                setTimeout(closeMailing, 2000);
+            } catch (err) {
+                mailingStatus.textContent = 'Something went wrong. Please try again.';
+            } finally {
+                mailingSubmit.disabled = false;
+            }
+        });
+
         // --- INTERACTION LOGIC ---
         let isEntered = false;
         
