@@ -273,13 +273,13 @@ body.entered .hero-subtitle {
             position: relative;
             width: 100%;
             max-width: 440px;
+            margin: auto;
             padding: 40px 32px;
             box-sizing: border-box;
             text-align: center;
             background: linear-gradient(135deg, rgba(20, 20, 30, 0.95), rgba(10, 10, 15, 0.98));
-            border: 1px solid rgba(216, 150, 255, 0.3);
+            border: 1px solid rgba(216, 150, 255, 0.15); /* same edge as the page sections */
             border-radius: 20px;
-            box-shadow: 0 0 40px rgba(216, 150, 255, 0.2);
         }
 
         .mailing-card h3 {
@@ -291,19 +291,20 @@ body.entered .hero-subtitle {
         }
 
         .mailing-card p {
-            font-size: 1rem;
-            margin: 0 0 24px;
+            font-size: 0.9rem;
+            margin: 16px 0 48px;
         }
 
         .mailing-close {
-            position: absolute;
-            top: 12px;
-            right: 16px;
+            align-self: center;
+            padding: 0;
             background: none;
             border: none;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.85rem;
             color: #aaa;
-            font-size: 1.8rem;
-            line-height: 1;
+            text-decoration: underline;
+            text-underline-offset: 3px;
             cursor: pointer;
         }
 
@@ -321,8 +322,8 @@ body.entered .hero-subtitle {
             font-size: 1rem;
             color: white;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(216, 150, 255, 0.3);
-            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* same edge as the screenshots/videos */
+            border-radius: 12px;
             outline: none;
         }
 
@@ -342,7 +343,7 @@ body.entered .hero-subtitle {
             color: white;
             background: rgba(216, 150, 255, 0.2);
             border: 1px solid var(--primary-glow);
-            border-radius: 30px;
+            border-radius: 12px;
             cursor: pointer;
             transition: background 0.3s ease, box-shadow 0.3s ease;
         }
@@ -355,11 +356,13 @@ body.entered .hero-subtitle {
         .mailing-form button[type="submit"]:disabled { opacity: 0.5; cursor: wait; }
 
         .mailing-status {
-            min-height: 1.5em;
             margin-top: 14px;
             font-size: 0.95rem;
             color: var(--secondary-glow);
         }
+
+        /* Take up no space until there's a message, so top and bottom padding match */
+        .mailing-status:empty { display: none; }
 
         /* --- NEW: MINIMAL SCROLL DOWN ARROW --- */
         .scroll-down-arrow {
@@ -680,13 +683,13 @@ Sammy Chuang
     <!-- --- MAILING LIST OVERLAY --- -->
     <div class="mailing-overlay" role="dialog" aria-modal="true" aria-labelledby="mailing-title">
         <div class="mailing-card">
-            <button type="button" class="mailing-close" aria-label="Close">&times;</button>
-            <h3 id="mailing-title">Join the Mailing List</h3>
-            <p>Get updates on <em>ALL GOOD THINGS</em> and our Steam release.</p>
+            <h3 id="mailing-title">Join Our Mailing List</h3>
+            <p>Get updates on <em>ALL GOOD THINGS</em> and our Steam release! No spam, just friendly milestones from local game devs.</p>
             <form class="mailing-form">
                 <input type="email" name="email" placeholder="your@email.com" required autocomplete="email">
                 <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
                 <button type="submit">Submit</button>
+                <button type="button" class="mailing-close">No thanks :(</button>
             </form>
             <div class="mailing-status" aria-live="polite"></div>
         </div>
